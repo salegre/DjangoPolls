@@ -1,0 +1,29 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}">
+
+<h1>{{ question.question_text }}</h1>
+
+{% if error_mesage %}<p><strong>{{ error_mesage }}</strong></p>{% endif %}
+
+{% if question.choice_set.all %}
+    <form action="{% url 'polls:vote' question.id %}" method="post">
+    {% csrf_token %}
+    {% for choice in question.choice_set.all %}
+        <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+        <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+    {% endfor %}
+<input type="submit" value="Cast it"></form>
+{% else %}
+    <h2>This question has no choices</h2>
+    <h3>{% if question.f != 0 %}{{ question.f }} {% endif %} f in chat, bois</h3>
+
+    <form action="{% url 'polls:pressf' question.id %}" method="post">
+    {% csrf_token %}
+        <div>
+            <input type="text" name="chat">
+            <input type="submit" value="Send">
+        </div>
+    </form>
+{% endif %}
+
+<a class="nav" href="{% url 'polls:index'%}">Home</a>
